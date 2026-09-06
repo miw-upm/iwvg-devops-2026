@@ -1,0 +1,26 @@
+logging:
+  level:
+    root: WARN
+    es.upm.api: INFO
+
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
+
+app:
+  hosting: AWS
+  db:
+    mobile: ${DB_MOBILE}
+    password: ${DB_PASSWORD}
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://postgres-server:5432/iwvgdevopsdb
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}

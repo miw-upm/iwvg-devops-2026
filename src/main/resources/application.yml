@@ -1,0 +1,44 @@
+server:
+  port: 8080
+
+info:
+  app:
+    artifact: "@project.artifactId@"
+    version: "@project.version@"
+    build: "@maven.build.timestamp@"
+
+spring:
+  application:
+    name: iwvg-devops
+  profiles:
+    default: dev
+  output:
+    ansi:
+      enabled: ALWAYS
+  cache:
+    type: none
+  jackson:
+    default-property-inclusion: NON_NULL
+  jpa:
+    open-in-view: false
+
+app:
+  hosting: localhost
+  db:
+    admin: ${DB_ADMIN:admin}
+    mobile: ${DB_MOBILE:6}
+    password: ${DB_PASSWORD:6}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: never
+
+logging:
+  level:
+    root: WARN
+    es.upm.api: DEBUG
