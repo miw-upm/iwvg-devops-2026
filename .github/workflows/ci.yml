@@ -52,14 +52,3 @@ jobs:
 #          -Dsonar.organization=miw-upm-github
 #          -Dsonar.host.url=https://sonarcloud.io
 #          -Dsonar.token=${{ secrets.SONAR_TOKEN }}
-          
-          
-          
-          
-          
-          
-          
-          
-          
-          
-          
