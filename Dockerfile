@@ -12,7 +12,7 @@ RUN mvn -B -DskipTests package && cp target/*.jar /app/app.jar
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 RUN addgroup -S app && adduser -S app -G app
-COPY --from=build /app/target/*.jar app.jar
+COPY --from=build /app/*.jar app.jar
 USER app
 
 EXPOSE 8080
