@@ -38,4 +38,3 @@
       
       echo "✅ Deploy exitoso"
       docker image prune --filter "until=12h" -f
-
