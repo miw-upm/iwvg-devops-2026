@@ -56,9 +56,9 @@ jobs:
       - name: 🚀 Deploy on AWS Lightsail
         uses: appleboy/ssh-action@v1.2.1
         with:
-          host: ${{ secrets.AWS_LIGHTSAIL_IP }}
-          username: ${{ secrets.AWS_LIGHTSAIL_USER }}
-          key: ${{ secrets.AWS_LIGHTSAIL_SSH_KEY }}
+          host: ${{ secrets.AWS_LIGHTSAIL_IP_STAGING }}
+          username: ${{ secrets.AWS_LIGHTSAIL_USER_STAGING }}
+          key: ${{ secrets.AWS_LIGHTSAIL_SSH_KEY_STAGING }}
           script: |
             echo ${{ secrets.GHCR_PERSONAL_ACCESS_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
             
@@ -78,7 +78,7 @@ jobs:
             
             echo "⏳ Esperando a que se levante"            
             for i in $(seq 1 6); do
-              sleep 10
+              sleep 15
               STATUS=$(docker inspect --format='{{.State.Health.Status}}' ${{ env.ARTIFACT }} 2>/dev/null)
               echo "Intento $i: $STATUS"
               [ "$STATUS" = "healthy" ] && break
