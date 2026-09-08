@@ -55,4 +55,8 @@ public class UserService {
                 .orElseThrow(() -> new NotFoundException("User id not found: " + id));
     }
 
+    public void delete(UUID id) {
+        this.userRepository.deleteById(id);
+    }
+
 }
