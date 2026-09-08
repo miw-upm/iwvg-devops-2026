@@ -12,20 +12,25 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(UserResource.USERS)
 @RequiredArgsConstructor
 @Log4j2
 public class UserResource {
     public static final String USERS = "/users";
+    public static final String USER_ID = USERS + "/{id}";
     private final UserService userService;
 
-    @PostMapping
+    @PostMapping(USERS)
     public void create(@Valid @RequestBody UserDto userDto) {
         userDto.doDefault();
         this.userService.create(userDto.toDomain());
     }
 
-    @GetMapping
+    @GetMapping(USER_ID)
+    public UserDto read(@PathVariable UUID id) {
+        return new UserDto(this.userService.read(id));
+    }
+
+    @GetMapping(USERS)
     public List<UserDto> find(@ModelAttribute UserFindCriteria criteria) {
         return this.userService.find(criteria)
                 .map(UserDto::new)
@@ -39,3 +44,4 @@ public class UserResource {
     }
 
 }
+

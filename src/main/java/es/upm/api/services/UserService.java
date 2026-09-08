@@ -4,6 +4,7 @@ import es.upm.api.infrastructure.data.daos.UserRepository;
 import es.upm.api.infrastructure.data.models.User;
 import es.upm.api.services.criteria.UserFindCriteria;
 import es.upm.api.services.exceptions.ClientBusinessException;
+import es.upm.api.services.exceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -47,6 +48,11 @@ public class UserService {
             return this.userRepository.findByMobile(criteria.getMobile()).stream();
         }
         return this.userRepository.findByActive(criteria.getActive()).stream();
+    }
+
+    public User read(UUID id) {
+        return this.userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("User id not found: " + id));
     }
 
     public void delete(UUID id) {
