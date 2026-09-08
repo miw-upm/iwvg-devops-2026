@@ -49,4 +49,8 @@ public class UserService {
         return this.userRepository.findByActive(criteria.getActive()).stream();
     }
 
+    public void delete(UUID id) {
+        this.userRepository.deleteById(id);
+    }
+
 }
