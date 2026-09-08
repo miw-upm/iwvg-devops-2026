@@ -59,6 +59,23 @@ class UserServiceIT {
     }
 
     @Test
+    void testDelete() {
+        User user = User.builder()
+                .mobile("699999996")
+                .firstName("DeletedUser")
+                .role(Role.CUSTOMER)
+                .active(true)
+                .build();
+
+        this.userService.create(user);
+
+        this.userService.delete(user.getId());
+
+        assertThat(this.userService.find(new UserFindCriteria(null, user.getMobile())).toList())
+                .isEmpty();
+    }
+
+    @Test
     void testFindAll() {
         assertThat(this.userService.find(new UserFindCriteria()).map(User::getMobile).toList())
                 .contains(

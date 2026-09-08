@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.web.servlet.client.EntityExchangeResult;
 import org.springframework.test.web.servlet.client.RestTestClient;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -106,5 +107,57 @@ class UserResourceFT {
                 .body(userDto)
                 .exchange()
                 .expectStatus().isBadRequest();
+    }
+
+    @Test
+    void testDelete() {
+        String mobile = "699999995";
+        UserDto userDto = UserDto.builder()
+                .mobile(mobile)
+                .firstName("DeletedResourceUser")
+                .build();
+
+        this.restTestClient.post()
+                .uri(UserResource.USERS)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(userDto)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody().isEmpty();
+
+        UserDto createdUser = this.findUserByMobile(mobile);
+
+        this.restTestClient.delete()
+                .uri(UserResource.USERS + "/" + createdUser.getId())
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody().isEmpty();
+
+        this.restTestClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path(UserResource.USERS)
+                        .queryParam("mobile", mobile)
+                        .build())
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(UserDto[].class)
+                .value(users -> assertThat(users).isEmpty());
+    }
+
+    private UserDto findUserByMobile(String mobile) {
+        EntityExchangeResult<UserDto[]> result = this.restTestClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path(UserResource.USERS)
+                        .queryParam("mobile", mobile)
+                        .build())
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(UserDto[].class)
+                .returnResult();
+
+        UserDto[] users = result.getResponseBody();
+        assertThat(users).isNotNull();
+        assertThat(users).hasSize(1);
+        return users[0];
     }
 }
