@@ -38,7 +38,7 @@ public class UserResource {
                 .toList();
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping(USER_ID)
     public void delete(@PathVariable UUID id) {
         this.userService.delete(id);
     }

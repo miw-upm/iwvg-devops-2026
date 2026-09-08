@@ -10,12 +10,26 @@ import lombok.NoArgsConstructor;
 public class UserFindCriteria {
     private Boolean active;
     private String mobile;
+    private Boolean billable;
+
+    public UserFindCriteria(Boolean active, String mobile) {
+        this.active = active;
+        this.mobile = mobile;
+    }
 
     public boolean all() {
-        return active == null && (mobile == null || mobile.isBlank());
+        return !this.hasActive() && !this.hasMobile() && !this.hasBillable();
+    }
+
+    public boolean hasActive() {
+        return this.active != null;
     }
 
     public boolean hasMobile() {
-        return mobile != null && !mobile.isBlank();
+        return this.mobile != null && !this.mobile.isBlank();
+    }
+
+    public boolean hasBillable() {
+        return this.billable != null;
     }
 }

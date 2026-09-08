@@ -38,16 +38,25 @@ public class UserService {
     }
 
     public Stream<User> find(UserFindCriteria criteria) {
-        if (criteria.all()) {
+        return this.findByActiveAndMobile(criteria)
+                .filter(user -> this.matchBillable(criteria, user));
+    }
+
+    private Stream<User> findByActiveAndMobile(UserFindCriteria criteria) {
+        if (!criteria.hasActive() && !criteria.hasMobile()) {
             return this.userRepository.findAll().stream();
         }
-        if (criteria.hasMobile() && criteria.getActive() != null) {
+        if (criteria.hasMobile() && criteria.hasActive()) {
             return this.userRepository.findByMobileAndActive(criteria.getMobile(), criteria.getActive()).stream();
         }
         if (criteria.hasMobile()) {
             return this.userRepository.findByMobile(criteria.getMobile()).stream();
         }
         return this.userRepository.findByActive(criteria.getActive()).stream();
+    }
+
+    private boolean matchBillable(UserFindCriteria criteria, User user) {
+        return !criteria.hasBillable() || user.isBillable() == criteria.getBillable();
     }
 
     public User read(UUID id) {
