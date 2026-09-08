@@ -1,16 +1,21 @@
 package es.upm.api.functionaltests;
 
 import es.upm.api.configurations.SeederForDev;
+import es.upm.api.infrastructure.data.daos.UserRepository;
+import es.upm.api.infrastructure.data.models.Role;
+import es.upm.api.infrastructure.data.models.User;
 import es.upm.api.resources.UserResource;
 import es.upm.api.resources.dtos.UserDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.client.EntityExchangeResult;
 import org.springframework.test.web.servlet.client.RestTestClient;
+
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -20,6 +25,9 @@ class UserResourceFT {
 
     @LocalServerPort
     private int port;
+
+    @Autowired
+    private UserRepository userRepository;
 
     private RestTestClient restTestClient;
 
@@ -111,24 +119,20 @@ class UserResourceFT {
 
     @Test
     void testDelete() {
+        UUID id = UUID.randomUUID();
         String mobile = "699999995";
-        UserDto userDto = UserDto.builder()
+        User user = User.builder()
+                .id(id)
                 .mobile(mobile)
                 .firstName("DeletedResourceUser")
+                .role(Role.CUSTOMER)
+                .active(true)
                 .build();
 
-        this.restTestClient.post()
-                .uri(UserResource.USERS)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(userDto)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody().isEmpty();
-
-        UserDto createdUser = this.findUserByMobile(mobile);
+        this.userRepository.save(user);
 
         this.restTestClient.delete()
-                .uri(UserResource.USERS + "/" + createdUser.getId())
+                .uri(UserResource.USERS + "/" + id)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody().isEmpty();
@@ -142,22 +146,5 @@ class UserResourceFT {
                 .expectStatus().isOk()
                 .expectBody(UserDto[].class)
                 .value(users -> assertThat(users).isEmpty());
-    }
-
-    private UserDto findUserByMobile(String mobile) {
-        EntityExchangeResult<UserDto[]> result = this.restTestClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path(UserResource.USERS)
-                        .queryParam("mobile", mobile)
-                        .build())
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(UserDto[].class)
-                .returnResult();
-
-        UserDto[] users = result.getResponseBody();
-        assertThat(users).isNotNull();
-        assertThat(users).hasSize(1);
-        return users[0];
     }
 }
