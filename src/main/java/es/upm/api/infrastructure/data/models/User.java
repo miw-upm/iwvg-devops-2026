@@ -34,4 +34,19 @@ public class User {
     private Role role;
     private LocalDate registrationDate;
     private Boolean active;
+
+    public boolean isBillable() {
+        return this.hasContent(this.firstName)
+                && this.hasContent(this.familyName)
+                && this.hasContent(this.email)
+                && this.hasContent(this.identity)
+                && this.hasContent(this.address)
+                && this.hasContent(this.city)
+                && this.province != null
+                && this.postalCode != null;
+    }
+
+    private boolean hasContent(String value) {
+        return value != null && !value.isBlank();
+    }
 }
