@@ -50,8 +50,7 @@ public class UserService {
     }
 
     public void delete(UUID id) {
-        this.userRepository.findById(id)
-                .ifPresent(this.userRepository::delete);
+        this.userRepository.deleteById(id);
     }
 
 }
